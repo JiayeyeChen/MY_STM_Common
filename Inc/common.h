@@ -5,6 +5,7 @@
 
 #ifdef USE_STM32F4_SERIES
 #include "stm32f4xx_hal.h"
+#include "stm32f4xx.h"
 #endif
 #ifdef USE_STM32F1_SERIES
 #include "stm32f1xx_hal.h"
