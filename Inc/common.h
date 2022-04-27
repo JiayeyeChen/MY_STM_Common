@@ -2,6 +2,7 @@
 #define COMMON_H
 
 #include "main.h"
+#include <string.h>
 
 #ifdef USE_STM32F4_SERIES
 #include "stm32f4xx_hal.h"
@@ -12,10 +13,18 @@
 #endif
 
 #define LIMIT_MIN_MAX(x,min,max) (x) = (((x)<=(min))?(min):(((x)>=(max))?(max):(x)))
+#define MAX(x,y) ((x) > (y) ? (x) : (y))
+#define MIN(x,y) ((x) > (y) ? (y) : (x))
 
 union UInt32UInt8
 {
 	uint32_t				b32;
+	uint8_t					b8[4];
+};
+
+union Int32UInt8
+{
+	int32_t				  b32;
 	uint8_t					b8[4];
 };
 
