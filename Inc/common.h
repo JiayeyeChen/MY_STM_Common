@@ -28,6 +28,12 @@ union Int32UInt8
 	uint8_t					b8[4];
 };
 
+union Int64UInt8
+{
+  int64_t         b64;
+  uint8_t         b8[8];
+};
+
 union UInt16UInt8
 {
 	uint16_t        b16;
