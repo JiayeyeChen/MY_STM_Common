@@ -74,4 +74,5 @@ void MicroSecDelay(TIM_HandleTypeDef* htim, uint16_t us);
 void InverseMatrix3D(float (*m)[3], float(*output)[3]);
 float DetMatrix3D(float (*m)[3]);
 float DetMatrix2D(float (*m)[2]);
+uint16_t CRC16_Modbus(uint8_t *buf,unsigned char Len);
 #endif
