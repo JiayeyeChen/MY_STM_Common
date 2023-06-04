@@ -1,8 +1,14 @@
-#ifndef COMMON_H
-#define COMMON_H
+#ifndef __COMMON_H
+#define __COMMON_H
 
-#include "main.h"
+//#define USE_STM32F1_SERIES
+#define USE_STM32F3_SERIES
+//#define USE_STM32F4_SERIES
+
 #include <string.h>
+#include <stdio.h>
+#include <stdarg.h>
+#include <stdlib.h>
 
 #ifdef USE_STM32F4_SERIES
 #include "stm32f4xx_hal.h"
@@ -10,6 +16,9 @@
 #endif
 #ifdef USE_STM32F1_SERIES
 #include "stm32f1xx_hal.h"
+#endif
+#ifdef USE_STM32F3_SERIES
+#include "stm32f3xx_hal.h"
 #endif
 
 #define LIMIT_MIN_MAX(x,min,max) (x) = (((x)<=(min))?(min):(((x)>=(max))?(max):(x)))
