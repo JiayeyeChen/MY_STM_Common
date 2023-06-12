@@ -41,7 +41,10 @@ void SERIALPROTOCOL_TransmitCargo(SerialProtocolHandle* hserial, uint8_t* buf, u
 
 void SERIALPROTOCOL_ReceiveCargoUARTIdleITCallback(SerialProtocolHandle* hserial)
 {
+  HAL_UART_DMAStop(hserial->huart);//Restart the DMA receiver
   uint8_t i = 0;
+  hserial->dmaPtr  = __HAL_DMA_GET_COUNTER(hserial->huart->hdmarx);
+//  hserial->dmaPtr = hserial->huart->hdmarx->Instance->CNDTR;
   while (i != 255)//Pointer for scanning through the buffer
   {
     if (hserial->rxMsgRaw[i] == 0xAA && hserial->rxMsgRaw[i + 1] == 0xCC)//Find the start delimiter
@@ -69,8 +72,6 @@ void SERIALPROTOCOL_ReceiveCargoUARTIdleITCallback(SerialProtocolHandle* hserial
     }
     i++;
   }
-
-  HAL_UART_DMAStop(hserial->huart);//Restart the DMA receiver
   HAL_UART_Receive_DMA(hserial->huart, hserial->rxMsgRaw, 255);
 }
 

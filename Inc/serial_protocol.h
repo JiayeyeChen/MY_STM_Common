@@ -25,6 +25,7 @@ typedef struct
   uint8_t               rxDataLen;//Max byte number = 255 - 6 = 249
   uint8_t               ifNewMsg;
   uint32_t              invalidRxMsgCount;
+  uint32_t              dmaPtr;
   /* Transmit */
   uint8_t               txMsg[255];
   uint8_t               txLen;
