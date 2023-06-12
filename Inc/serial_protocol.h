@@ -6,11 +6,14 @@
 enum DataLogTask
 {
   DATALOG_TASK_FREE,
-  DATALOG_TASK_START,
+  DATALOG_TASK_START_ACTIVE,
+  DATALOG_TASK_START_PASSIVE,
   DATALOG_TASK_SEND_DATA_SLOT_LEN,
-  DATALOG_TASK_SEND_DATA_SLOT_MSG,
+  DATALOG_TASK_START_SEND_DATA_SLOT_LABEL,
+  DATALOG_TASK_SEND_DATA_SLOT_LABEL,
   DATALOG_TASK_DATALOG,
-  DATALOG_TASK_END
+  DATALOG_TASK_END_ACTIVE,
+  DATALOG_TASK_END_PASSIVE
 };
 
 typedef struct
@@ -41,14 +44,16 @@ void SERIALPROTOCOL_SetNewDatalogSlotLength(SerialProtocolHandle* hserial, uint8
 void SERIALPROTOCOL_TransmitCargo(SerialProtocolHandle* hserial, uint8_t* buf, uint8_t size);
 void SERIALPROTOCOL_ReceiveCargoUARTIdleITCallback(SerialProtocolHandle* hserial);
 void SERIALPROTOCOL_SendText(SerialProtocolHandle* hserial, char text[]);
-void SERIALPROTOCOL_DatalogCargoReceiveManager(SerialProtocolHandle* hserial, void (*LabelSetFunc)(void));
+void SERIALPROTOCOL_DatalogCargoReceiveManager(SerialProtocolHandle* hserial);
+void SERIALPROTOCOL_DatalogCargoTransmitManager(SerialProtocolHandle* hserial, void (*LabelSetFunc)(void), union FloatUInt8 dala_slots[]);
 void SERIALPROTOCOL_DatalogManager(SerialProtocolHandle* hserial, \
                                    void (*LabelSetFunc)(void), union FloatUInt8 dala_slots[]);
 void SERIALPROTOCOL_DatalogSingleCargoTransmit(SerialProtocolHandle* hserial, union FloatUInt8 dala_slots[]);
 void SERIALPROTOCOL_DatalogInitialization(SerialProtocolHandle* hserial);
-void SERIALPROTOCOL_DatalogStart(SerialProtocolHandle* hserial);
-void SERIALPROTOCOL_DatalogEnd(SerialProtocolHandle* hserial);
+void SERIALPROTOCOL_DatalogInitiateStart(SerialProtocolHandle* hserial);
+void SERIALPROTOCOL_DatalogInitiateEnd(SerialProtocolHandle* hserial);
 void SERIALPROTOCOL_SendDataSlotLen(SerialProtocolHandle* hserial);
 void SERIALPROTOCOL_SendDataSlotLabel(SerialProtocolHandle* hserial, char* label_1, ...);
 uint8_t SERIALPROTOCOL_CompareRxCfmMsgWithStr(SerialProtocolHandle* hserial, char str[], uint8_t size_of_str);
+uint8_t SERIALPROTOCOL_IfNewMsgAndItIsTheString(SerialProtocolHandle* hserial, char str[]);
 #endif
