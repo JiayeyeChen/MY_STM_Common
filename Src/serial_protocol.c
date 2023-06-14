@@ -71,12 +71,12 @@ void SERIALPROTOCOL_ReceiveCargoUARTIdleITCallback(SerialProtocolHandle* hserial
     }
     i++;
   }
-  HAL_UART_Receive_DMA(hserial->huart, hserial->rxMsgRaw, 255);
+  HAL_UARTEx_ReceiveToIdle_DMA(hserial->huart, hserial->rxMsgRaw, 255);
 }
 
 void SERIALPROTOCOL_EnableCommunication(SerialProtocolHandle* hserial)
 {
-  HAL_UART_Receive_DMA(hserial->huart, hserial->rxMsgRaw, 255);
+  HAL_UARTEx_ReceiveToIdle_DMA(hserial->huart, hserial->rxMsgRaw, 255);
 }
 
 void SERIALPROTOCOL_SendText(SerialProtocolHandle* hserial, char text[])
