@@ -37,6 +37,7 @@ typedef struct
   uint32_t              datalogStartTimestamp;
   enum DataLogTask      datalogTask;
   uint8_t               datalogLabel2SendPtr;
+  uint8_t               datalogBuf[255];
 }SerialProtocolHandle;
 
 SerialProtocolHandle SERIALPROTOCOL_Create(UART_HandleTypeDef* huart);

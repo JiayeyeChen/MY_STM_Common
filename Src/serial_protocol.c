@@ -71,12 +71,12 @@ void SERIALPROTOCOL_ReceiveCargoUARTIdleITCallback(SerialProtocolHandle* hserial
     }
     i++;
   }
-  HAL_UARTEx_ReceiveToIdle_DMA(hserial->huart, hserial->rxMsgRaw, 255);
+  HAL_UART_Receive_DMA(hserial->huart, hserial->rxMsgRaw, 255);
 }
 
 void SERIALPROTOCOL_EnableCommunication(SerialProtocolHandle* hserial)
 {
-  HAL_UARTEx_ReceiveToIdle_DMA(hserial->huart, hserial->rxMsgRaw, 255);
+  HAL_UART_Receive_DMA(hserial->huart, hserial->rxMsgRaw, 255);
 }
 
 void SERIALPROTOCOL_SendText(SerialProtocolHandle* hserial, char text[])
@@ -196,27 +196,26 @@ void SERIALPROTOCOL_DatalogSingleCargoTransmit(SerialProtocolHandle* hserial, un
   uint8_t i = 0;
   union UInt32UInt8 sysTick;
   sysTick.b32 = HAL_GetTick();
-  uint8_t buf[(hserial->dataSlotLen + 2) * 4];
   //Index
-  buf[i++] = hserial->datalogIndex.b8[0];
-  buf[i++] = hserial->datalogIndex.b8[1];
-  buf[i++] = hserial->datalogIndex.b8[2];
-  buf[i++] = hserial->datalogIndex.b8[3];
+  hserial->datalogBuf[i++] = hserial->datalogIndex.b8[0];
+  hserial->datalogBuf[i++] = hserial->datalogIndex.b8[1];
+  hserial->datalogBuf[i++] = hserial->datalogIndex.b8[2];
+  hserial->datalogBuf[i++] = hserial->datalogIndex.b8[3];
   hserial->datalogIndex.b32++;
   //Time stamp
-  buf[i++] = sysTick.b8[0];
-  buf[i++] = sysTick.b8[1];
-  buf[i++] = sysTick.b8[2];
-  buf[i++] = sysTick.b8[3];
+  hserial->datalogBuf[i++] = sysTick.b8[0];
+  hserial->datalogBuf[i++] = sysTick.b8[1];
+  hserial->datalogBuf[i++] = sysTick.b8[2];
+  hserial->datalogBuf[i++] = sysTick.b8[3];
   //Data
   for (uint8_t j = 0; j < hserial->dataSlotLen; j++)
   {
-    buf[i++] = dala_slots[j].b8[0];
-    buf[i++] = dala_slots[j].b8[1];
-    buf[i++] = dala_slots[j].b8[2];
-    buf[i++] = dala_slots[j].b8[3];
+    hserial->datalogBuf[i++] = dala_slots[j].b8[0];
+    hserial->datalogBuf[i++] = dala_slots[j].b8[1];
+    hserial->datalogBuf[i++] = dala_slots[j].b8[2];
+    hserial->datalogBuf[i++] = dala_slots[j].b8[3];
   }
-  SERIALPROTOCOL_TransmitCargo(hserial, buf, hserial->dataSlotLen * 4 + 8);
+  SERIALPROTOCOL_TransmitCargo(hserial, hserial->datalogBuf, hserial->dataSlotLen * 4 + 8);
 }
 
 void SERIALPROTOCOL_DatalogInitialization(SerialProtocolHandle* hserial)
