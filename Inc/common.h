@@ -4,6 +4,7 @@
 //#define USE_STM32F1_SERIES
 #define USE_STM32F3_SERIES
 //#define USE_STM32F4_SERIES
+//#define USE_STM32H7_SERIES
 
 #include <string.h>
 #include <stdio.h>
@@ -19,6 +20,9 @@
 #endif
 #ifdef USE_STM32F3_SERIES
 #include "stm32f3xx_hal.h"
+#endif
+#ifdef USE_STM32H7_SERIES
+#include "stm32h7xx_hal.h"
 #endif
 
 #define LIMIT_MIN_MAX(x,min,max) (x) = (((x)<=(min))?(min):(((x)>=(max))?(max):(x)))

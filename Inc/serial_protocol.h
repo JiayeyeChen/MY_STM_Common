@@ -47,10 +47,10 @@ void SERIALPROTOCOL_TransmitCargo(SerialProtocolHandle* hserial, uint8_t* buf, u
 void SERIALPROTOCOL_ReceiveCargoUARTIdleITCallback(SerialProtocolHandle* hserial);
 void SERIALPROTOCOL_SendText(SerialProtocolHandle* hserial, char text[]);
 void SERIALPROTOCOL_DatalogCargoReceiveManager(SerialProtocolHandle* hserial);
-void SERIALPROTOCOL_DatalogCargoTransmitManager(SerialProtocolHandle* hserial, void (*LabelSetFunc)(void), union FloatUInt8 dala_slots[]);
+void SERIALPROTOCOL_DatalogCargoTransmitManager(SerialProtocolHandle* hserial, void (*LabelSetFunc)(void), union FloatUInt8 data_slots[]);
 void SERIALPROTOCOL_DatalogManager(SerialProtocolHandle* hserial, \
-                                   void (*LabelSetFunc)(void), union FloatUInt8 dala_slots[]);
-void SERIALPROTOCOL_DatalogSingleCargoTransmit(SerialProtocolHandle* hserial, union FloatUInt8 dala_slots[]);
+                                   void (*LabelSetFunc)(void), union FloatUInt8 data_slots[]);
+void SERIALPROTOCOL_DatalogSingleCargoTransmit(SerialProtocolHandle* hserial, union FloatUInt8 data_slots[]);
 void SERIALPROTOCOL_DatalogInitialization(SerialProtocolHandle* hserial);
 void SERIALPROTOCOL_DatalogInitiateStart(SerialProtocolHandle* hserial);
 void SERIALPROTOCOL_DatalogInitiateEnd(SerialProtocolHandle* hserial);

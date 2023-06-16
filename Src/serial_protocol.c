@@ -159,7 +159,7 @@ void SERIALPROTOCOL_DatalogCargoReceiveManager(SerialProtocolHandle* hserial)
   }
 }
 
-void SERIALPROTOCOL_DatalogCargoTransmitManager(SerialProtocolHandle* hserial, void (*LabelSetFunc)(void), union FloatUInt8 dala_slots[])
+void SERIALPROTOCOL_DatalogCargoTransmitManager(SerialProtocolHandle* hserial, void (*LabelSetFunc)(void), union FloatUInt8 data_slots[])
 {
   if (hserial->datalogTask == DATALOG_TASK_START_ACTIVE)
     SERIALPROTOCOL_SendText(hserial, "Datalog start");
@@ -174,7 +174,7 @@ void SERIALPROTOCOL_DatalogCargoTransmitManager(SerialProtocolHandle* hserial, v
   {
     if (hserial->ifNewDatalogPiece2Send)
     {
-      SERIALPROTOCOL_DatalogSingleCargoTransmit(hserial, dala_slots);
+      SERIALPROTOCOL_DatalogSingleCargoTransmit(hserial, data_slots);
       hserial->ifNewDatalogPiece2Send = 0;
     }
   }
@@ -185,13 +185,13 @@ void SERIALPROTOCOL_DatalogCargoTransmitManager(SerialProtocolHandle* hserial, v
 }
 
 void SERIALPROTOCOL_DatalogManager(SerialProtocolHandle* hserial, \
-                                   void (*LabelSetFunc)(void), union FloatUInt8 dala_slots[])
+                                   void (*LabelSetFunc)(void), union FloatUInt8 data_slots[])
 {
   SERIALPROTOCOL_DatalogCargoReceiveManager(hserial);
-  SERIALPROTOCOL_DatalogCargoTransmitManager(hserial, LabelSetFunc, dala_slots);
+  SERIALPROTOCOL_DatalogCargoTransmitManager(hserial, LabelSetFunc, data_slots);
 }
 
-void SERIALPROTOCOL_DatalogSingleCargoTransmit(SerialProtocolHandle* hserial, union FloatUInt8 dala_slots[])
+void SERIALPROTOCOL_DatalogSingleCargoTransmit(SerialProtocolHandle* hserial, union FloatUInt8 data_slots[])
 {
   uint8_t i = 0;
   union UInt32UInt8 sysTick;
@@ -210,10 +210,10 @@ void SERIALPROTOCOL_DatalogSingleCargoTransmit(SerialProtocolHandle* hserial, un
   //Data
   for (uint8_t j = 0; j < hserial->dataSlotLen; j++)
   {
-    hserial->datalogBuf[i++] = dala_slots[j].b8[0];
-    hserial->datalogBuf[i++] = dala_slots[j].b8[1];
-    hserial->datalogBuf[i++] = dala_slots[j].b8[2];
-    hserial->datalogBuf[i++] = dala_slots[j].b8[3];
+    hserial->datalogBuf[i++] = data_slots[j].b8[0];
+    hserial->datalogBuf[i++] = data_slots[j].b8[1];
+    hserial->datalogBuf[i++] = data_slots[j].b8[2];
+    hserial->datalogBuf[i++] = data_slots[j].b8[3];
   }
   SERIALPROTOCOL_TransmitCargo(hserial, hserial->datalogBuf, hserial->dataSlotLen * 4 + 8);
 }
