@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <stdlib.h>
+#include "my_math.h"
 
 #ifdef USE_STM32F4_SERIES
 #include "stm32f4xx_hal.h"
