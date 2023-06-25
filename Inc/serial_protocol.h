@@ -30,6 +30,8 @@ typedef struct
   uint8_t               txMsg[255];
   uint8_t               txLen;
   /* Datalog */
+  union FloatUInt8*     dataSlot;
+  void                  (*SetLabelFunc) (void);
   uint8_t               ifNewDatalogPiece2Send;
   uint8_t               ifDatalogInitialized;
   union UInt32UInt8     datalogIndex;
@@ -43,13 +45,14 @@ typedef struct
 SerialProtocolHandle SERIALPROTOCOL_Create(UART_HandleTypeDef* huart);
 void SERIALPROTOCOL_EnableCommunication(SerialProtocolHandle* hserial);
 void SERIALPROTOCOL_SetNewDatalogSlotLength(SerialProtocolHandle* hserial, uint8_t len);
+void SERIALPROTOCOL_SetNewDatalogSlot(SerialProtocolHandle* hserial, union FloatUInt8 (*data_slot));
+void SERIALPROTOCOL_SetNewDatalogSendLabelFunction(SerialProtocolHandle* hserial, FuncTypeVoidVoid func);
 void SERIALPROTOCOL_TransmitCargo(SerialProtocolHandle* hserial, uint8_t* buf, uint8_t size);
 void SERIALPROTOCOL_ReceiveCargoUARTIdleITCallback(SerialProtocolHandle* hserial);
 void SERIALPROTOCOL_SendText(SerialProtocolHandle* hserial, char text[]);
 void SERIALPROTOCOL_DatalogCargoReceiveManager(SerialProtocolHandle* hserial);
 void SERIALPROTOCOL_DatalogCargoTransmitManager(SerialProtocolHandle* hserial, void (*LabelSetFunc)(void), union FloatUInt8 data_slots[]);
-void SERIALPROTOCOL_DatalogManager(SerialProtocolHandle* hserial, \
-                                   void (*LabelSetFunc)(void), union FloatUInt8 data_slots[]);
+void SERIALPROTOCOL_DatalogManager(SerialProtocolHandle* hserial);
 void SERIALPROTOCOL_DatalogSingleCargoTransmit(SerialProtocolHandle* hserial, union FloatUInt8 data_slots[]);
 void SERIALPROTOCOL_DatalogInitialization(SerialProtocolHandle* hserial);
 void SERIALPROTOCOL_DatalogInitiateStart(SerialProtocolHandle* hserial);

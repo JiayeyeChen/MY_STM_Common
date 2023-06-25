@@ -24,6 +24,16 @@ void SERIALPROTOCOL_SetNewDatalogSlotLength(SerialProtocolHandle* hserial, uint8
   hserial->dataSlotLen = len;
 }
 
+void SERIALPROTOCOL_SetNewDatalogSlot(SerialProtocolHandle* hserial, union FloatUInt8 (*data_slot))
+{
+  hserial->dataSlot = data_slot;
+}
+
+void SERIALPROTOCOL_SetNewDatalogSendLabelFunction(SerialProtocolHandle* hserial, FuncTypeVoidVoid func)
+{
+  hserial->SetLabelFunc = func;
+}
+
 void SERIALPROTOCOL_TransmitCargo(SerialProtocolHandle* hserial, uint8_t* buf, uint8_t size)
 {
   hserial->txLen = size + 6;
@@ -184,11 +194,10 @@ void SERIALPROTOCOL_DatalogCargoTransmitManager(SerialProtocolHandle* hserial, v
     SERIALPROTOCOL_SendText(hserial, "Datalog Ready to End!");
 }
 
-void SERIALPROTOCOL_DatalogManager(SerialProtocolHandle* hserial, \
-                                   void (*LabelSetFunc)(void), union FloatUInt8 data_slots[])
+void SERIALPROTOCOL_DatalogManager(SerialProtocolHandle* hserial)
 {
   SERIALPROTOCOL_DatalogCargoReceiveManager(hserial);
-  SERIALPROTOCOL_DatalogCargoTransmitManager(hserial, LabelSetFunc, data_slots);
+  SERIALPROTOCOL_DatalogCargoTransmitManager(hserial, hserial->SetLabelFunc, hserial->dataSlot);
 }
 
 void SERIALPROTOCOL_DatalogSingleCargoTransmit(SerialProtocolHandle* hserial, union FloatUInt8 data_slots[])

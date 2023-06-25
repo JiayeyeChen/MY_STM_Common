@@ -30,6 +30,8 @@
 #define MAX(x,y) ((x) > (y) ? (x) : (y))
 #define MIN(x,y) ((x) > (y) ? (y) : (x))
 
+typedef void (*FuncTypeVoidVoid)(void);
+
 union UInt32UInt8
 {
 	uint32_t				b32;
