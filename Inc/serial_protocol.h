@@ -56,6 +56,7 @@ void SERIALPROTOCOL_DatalogManager(SerialProtocolHandle* hserial);
 void SERIALPROTOCOL_DatalogSingleCargoTransmit(SerialProtocolHandle* hserial, union FloatUInt8 data_slots[]);
 void SERIALPROTOCOL_DatalogInitialization(SerialProtocolHandle* hserial);
 void SERIALPROTOCOL_DatalogInitiateStart(SerialProtocolHandle* hserial);
+void SERIALPROTOCOL_DatalogPassivelyStart(SerialProtocolHandle* hserial);
 void SERIALPROTOCOL_DatalogInitiateEnd(SerialProtocolHandle* hserial);
 void SERIALPROTOCOL_SendDataSlotLen(SerialProtocolHandle* hserial);
 void SERIALPROTOCOL_SendDataSlotLabel(SerialProtocolHandle* hserial, char* label_1, ...);

@@ -101,8 +101,7 @@ void SERIALPROTOCOL_DatalogCargoReceiveManager(SerialProtocolHandle* hserial)
     ////////////////////*Force to the following states*//////////
     if (!strncmp((const char*)hserial->rxMsgCfm, "Datalog start", hserial->rxDataLen))
     {
-      hserial->datalogTask = DATALOG_TASK_SEND_DATA_SLOT_LEN;
-      SERIALPROTOCOL_DatalogInitialization(hserial);
+      SERIALPROTOCOL_DatalogPassivelyStart(hserial);
       hserial->ifNewMsg = 0;
       return;
     }
@@ -238,6 +237,12 @@ void SERIALPROTOCOL_DatalogInitiateStart(SerialProtocolHandle* hserial)
 {
   SERIALPROTOCOL_DatalogInitialization(hserial);
   hserial->datalogTask = DATALOG_TASK_START_ACTIVE;
+}
+
+void SERIALPROTOCOL_DatalogPassivelyStart(SerialProtocolHandle* hserial)
+{
+  SERIALPROTOCOL_DatalogInitialization(hserial);
+  hserial->datalogTask = DATALOG_TASK_SEND_DATA_SLOT_LEN;
 }
 
 void SERIALPROTOCOL_DatalogInitiateEnd(SerialProtocolHandle* hserial)
