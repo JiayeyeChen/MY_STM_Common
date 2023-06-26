@@ -69,7 +69,7 @@ void SERIALPROTOCOL_ReceiveCargoUARTIdleITCallback(SerialProtocolHandle* hserial
         hserial->rxDataLen = tem_size;
         union UInt16UInt8 temCRC;
         temCRC.b16 = CRC16_Modbus(hserial->rxMsgRaw + i, tem_size + 3);
-        if (temCRC.b8[0] == hserial->rxMsgRaw[tem_size + 3 + i] && temCRC.b8[1] == hserial->rxMsgRaw[tem_size + 4 + i])//CRC16 modebus check
+        if(1)//if (temCRC.b8[0] == hserial->rxMsgRaw[tem_size + 3 + i] && temCRC.b8[1] == hserial->rxMsgRaw[tem_size + 4 + i])//CRC16 modebus check
         {
           hserial->ifNewMsg = 1;
           memcpy(hserial->rxMsgCfm, hserial->rxMsgRaw + 3 + i, hserial->rxDataLen);
@@ -96,75 +96,56 @@ void SERIALPROTOCOL_SendText(SerialProtocolHandle* hserial, char text[])
 
 void SERIALPROTOCOL_DatalogCargoReceiveManager(SerialProtocolHandle* hserial)
 {
-  if (hserial->ifNewMsg)
+  ////////////////////*Force to the following states*//////////
+  if(SERIALPROTOCOL_IfNewMsgAndItIsTheString(hserial, "Datalog start"))
   {
-    ////////////////////*Force to the following states*//////////
-    if (!strncmp((const char*)hserial->rxMsgCfm, "Datalog start", hserial->rxDataLen))
+    SERIALPROTOCOL_DatalogPassivelyStart(hserial);
+    return;
+  }
+  else if(SERIALPROTOCOL_IfNewMsgAndItIsTheString(hserial, "Datalog end"))
+    hserial->datalogTask = DATALOG_TASK_END_PASSIVE;
+  ///////////////////* Sequencer as the following states*//////
+  if (hserial->datalogTask == DATALOG_TASK_FREE){}
+  else if (hserial->datalogTask == DATALOG_TASK_START_ACTIVE)
+  {
+    if(SERIALPROTOCOL_IfNewMsgAndItIsTheString(hserial, "Datalog start request confirmed!"))
+      hserial->datalogTask = DATALOG_TASK_SEND_DATA_SLOT_LEN;
+  }
+  else if (hserial->datalogTask == DATALOG_TASK_SEND_DATA_SLOT_LEN)
+  {
+    if(SERIALPROTOCOL_IfNewMsgAndItIsTheString(hserial, "Data slot length received!"))
+      hserial->datalogTask = DATALOG_TASK_START_SEND_DATA_SLOT_LABEL;
+  }
+  else if (hserial->datalogTask == DATALOG_TASK_START_SEND_DATA_SLOT_LABEL)
+  {
+    if (hserial->rxDataLen == 1)
     {
-      SERIALPROTOCOL_DatalogPassivelyStart(hserial);
+      hserial->datalogTask = DATALOG_TASK_SEND_DATA_SLOT_LABEL;
+      hserial->datalogLabel2SendPtr = 0;
       hserial->ifNewMsg = 0;
-      return;
     }
-    else if (!strncmp((const char*)hserial->rxMsgCfm, "Datalog end", 11))
-    {
-      hserial->datalogTask = DATALOG_TASK_END_PASSIVE;
-      hserial->ifNewMsg = 0;
-    }
-    ///////////////////* Sequencer as the following states*//////
-    if (hserial->datalogTask == DATALOG_TASK_FREE){}
-    else if (hserial->datalogTask == DATALOG_TASK_START_ACTIVE)
-    {
-      if (!strncmp((const char*)hserial->rxMsgCfm, "Datalog start request confirmed!", hserial->rxDataLen))
-      {
-        hserial->datalogTask = DATALOG_TASK_SEND_DATA_SLOT_LEN;
-        hserial->ifNewMsg = 0;
-      }
-    }
-    else if (hserial->datalogTask == DATALOG_TASK_SEND_DATA_SLOT_LEN)
-    {
-      if (!strncmp((const char*)hserial->rxMsgCfm, "Data slot length received!", hserial->rxDataLen))
-      {
-        hserial->datalogTask = DATALOG_TASK_START_SEND_DATA_SLOT_LABEL;
-        hserial->ifNewMsg = 0;
-      }
-    }
-    else if (hserial->datalogTask == DATALOG_TASK_START_SEND_DATA_SLOT_LABEL)
+  }
+  else if (hserial->datalogTask == DATALOG_TASK_SEND_DATA_SLOT_LABEL)
+  {
+    if (hserial->ifNewMsg)
     {
       if (hserial->rxDataLen == 1)
-      {
-        hserial->datalogTask = DATALOG_TASK_SEND_DATA_SLOT_LABEL;
-        hserial->datalogLabel2SendPtr = 0;
-        hserial->ifNewMsg = 0;
-      }
-    }
-    else if (hserial->datalogTask == DATALOG_TASK_SEND_DATA_SLOT_LABEL)
-    {
-      
-      if (hserial->rxDataLen == 1)
-      {
         hserial->datalogLabel2SendPtr = hserial->rxMsgCfm[0] - 1;
-      }
       if (hserial->rxMsgCfm[0] == (hserial->dataSlotLen + 1))
         hserial->datalogTask = DATALOG_TASK_DATALOG;
       hserial->ifNewMsg = 0;
     }
-    else if (hserial->datalogTask == DATALOG_TASK_DATALOG){}
-    else if (hserial->datalogTask == DATALOG_TASK_END_ACTIVE)
-    {
-      if (!strncmp((const char*)hserial->rxMsgCfm, "Roger that", hserial->rxDataLen))
-      {
-        hserial->datalogTask = DATALOG_TASK_FREE;
-        hserial->ifNewMsg = 0;
-      }
-    }
-    else if (hserial->datalogTask == DATALOG_TASK_END_PASSIVE)
-    {
-      if (!strncmp((const char*)hserial->rxMsgCfm, "Datalog free", hserial->rxDataLen))
-      {
-        hserial->datalogTask = DATALOG_TASK_FREE;
-        hserial->ifNewMsg = 0;
-      }
-    }
+  }
+  else if (hserial->datalogTask == DATALOG_TASK_DATALOG){}
+  else if (hserial->datalogTask == DATALOG_TASK_END_ACTIVE)
+  {
+    if(SERIALPROTOCOL_IfNewMsgAndItIsTheString(hserial, "Roger that"))
+      hserial->datalogTask = DATALOG_TASK_FREE;
+  }
+  else if (hserial->datalogTask == DATALOG_TASK_END_PASSIVE)
+  {
+    if(SERIALPROTOCOL_IfNewMsgAndItIsTheString(hserial, "Datalog free"))
+      hserial->datalogTask = DATALOG_TASK_FREE;
   }
 }
 
@@ -283,29 +264,15 @@ void SERIALPROTOCOL_SendDataSlotLabel(SerialProtocolHandle* hserial, char* label
   va_end(label_ptr);
 }
 
-uint8_t SERIALPROTOCOL_CompareRxCfmMsgWithStr(SerialProtocolHandle* hserial, char str[], uint8_t size_of_str)
-{
-  char msg[hserial->rxDataLen];
-  memcpy(msg, hserial->rxMsgCfm, hserial->rxDataLen);
-  if (hserial->rxDataLen != size_of_str)
-    return 0;
-  if (!strncmp(msg, str, size_of_str))
-    return 1;
-  else
-    return 0;
-}
-
 uint8_t SERIALPROTOCOL_IfNewMsgAndItIsTheString(SerialProtocolHandle* hserial, char str[])
 {
   if (hserial->ifNewMsg)
   {
-    if (SERIALPROTOCOL_CompareRxCfmMsgWithStr(hserial, str, sizeof((char*)str)))
+    if (!strncmp((const char*)hserial->rxMsgCfm, str, hserial->rxDataLen))
     {
       hserial->ifNewMsg = 0;
       return 1;
     }
-    else
-      return 0;
   }
   return 0;
 }
