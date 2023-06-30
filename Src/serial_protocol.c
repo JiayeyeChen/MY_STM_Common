@@ -97,23 +97,23 @@ void SERIALPROTOCOL_SendText(SerialProtocolHandle* hserial, char text[])
 void SERIALPROTOCOL_DatalogCargoReceiveManager(SerialProtocolHandle* hserial)
 {
   ////////////////////*Force to the following states*//////////
-  if(SERIALPROTOCOL_IfNewMsgAndItIsTheString(hserial, "Datalog start"))
+  if(SERIALPROTOCOL_IfNewMsgAndItIsTheString(hserial, "Datalog start", 0))
   {
     SERIALPROTOCOL_DatalogPassivelyStart(hserial);
     return;
   }
-  else if(SERIALPROTOCOL_IfNewMsgAndItIsTheString(hserial, "Datalog end"))
+  else if(SERIALPROTOCOL_IfNewMsgAndItIsTheString(hserial, "Datalog end", 0))
     hserial->datalogTask = DATALOG_TASK_END_PASSIVE;
   ///////////////////* Sequencer as the following states*//////
   if (hserial->datalogTask == DATALOG_TASK_FREE){}
   else if (hserial->datalogTask == DATALOG_TASK_START_ACTIVE)
   {
-    if(SERIALPROTOCOL_IfNewMsgAndItIsTheString(hserial, "Datalog start request confirmed!"))
+    if(SERIALPROTOCOL_IfNewMsgAndItIsTheString(hserial, "Datalog start request confirmed!", 0))
       hserial->datalogTask = DATALOG_TASK_SEND_DATA_SLOT_LEN;
   }
   else if (hserial->datalogTask == DATALOG_TASK_SEND_DATA_SLOT_LEN)
   {
-    if(SERIALPROTOCOL_IfNewMsgAndItIsTheString(hserial, "Data slot length received!"))
+    if(SERIALPROTOCOL_IfNewMsgAndItIsTheString(hserial, "Data slot length received!", 0))
       hserial->datalogTask = DATALOG_TASK_START_SEND_DATA_SLOT_LABEL;
   }
   else if (hserial->datalogTask == DATALOG_TASK_START_SEND_DATA_SLOT_LABEL)
@@ -139,12 +139,12 @@ void SERIALPROTOCOL_DatalogCargoReceiveManager(SerialProtocolHandle* hserial)
   else if (hserial->datalogTask == DATALOG_TASK_DATALOG){}
   else if (hserial->datalogTask == DATALOG_TASK_END_ACTIVE)
   {
-    if(SERIALPROTOCOL_IfNewMsgAndItIsTheString(hserial, "Roger that"))
+    if(SERIALPROTOCOL_IfNewMsgAndItIsTheString(hserial, "Roger that", 0))
       hserial->datalogTask = DATALOG_TASK_FREE;
   }
   else if (hserial->datalogTask == DATALOG_TASK_END_PASSIVE)
   {
-    if(SERIALPROTOCOL_IfNewMsgAndItIsTheString(hserial, "Datalog free"))
+    if(SERIALPROTOCOL_IfNewMsgAndItIsTheString(hserial, "Datalog free", 0))
       hserial->datalogTask = DATALOG_TASK_FREE;
   }
 }
@@ -264,11 +264,11 @@ void SERIALPROTOCOL_SendDataSlotLabel(SerialProtocolHandle* hserial, char* label
   va_end(label_ptr);
 }
 
-uint8_t SERIALPROTOCOL_IfNewMsgAndItIsTheString(SerialProtocolHandle* hserial, char str[])
+uint8_t SERIALPROTOCOL_IfNewMsgAndItIsTheString(SerialProtocolHandle* hserial, char str[], uint8_t pos)
 {
   if (hserial->ifNewMsg)
   {
-    if (!strncmp((const char*)hserial->rxMsgCfm, str, hserial->rxDataLen))
+    if (!strncmp((const char*)(hserial->rxMsgCfm + pos), (const char*)str, strlen(str)))
     {
       hserial->ifNewMsg = 0;
       return 1;

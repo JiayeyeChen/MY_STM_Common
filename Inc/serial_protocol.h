@@ -60,5 +60,5 @@ void SERIALPROTOCOL_DatalogPassivelyStart(SerialProtocolHandle* hserial);
 void SERIALPROTOCOL_DatalogInitiateEnd(SerialProtocolHandle* hserial);
 void SERIALPROTOCOL_SendDataSlotLen(SerialProtocolHandle* hserial);
 void SERIALPROTOCOL_SendDataSlotLabel(SerialProtocolHandle* hserial, char* label_1, ...);
-uint8_t SERIALPROTOCOL_IfNewMsgAndItIsTheString(SerialProtocolHandle* hserial, char str[]);
+uint8_t SERIALPROTOCOL_IfNewMsgAndItIsTheString(SerialProtocolHandle* hserial, char str[], uint8_t pos);
 #endif
