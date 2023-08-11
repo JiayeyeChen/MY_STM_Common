@@ -2,8 +2,8 @@
 #define __COMMON_H
 
 //#define USE_STM32F1_SERIES
-#define USE_STM32F3_SERIES
-//#define USE_STM32F4_SERIES
+//#define USE_STM32F3_SERIES
+#define USE_STM32F4_SERIES
 //#define USE_STM32H7_SERIES
 
 #include <string.h>
