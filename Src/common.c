@@ -126,3 +126,15 @@ uint16_t CRC16_Modbus(uint8_t *buf,unsigned char Len)
   }   
  return temp;                          
 }
+
+void LowPassFilter_Init(LowPassFilterHandle* hfilter, float cut_off_frequency, float duration_in_second)
+{
+  hfilter->alpha = cut_off_frequency * duration_in_second / (1.0f + cut_off_frequency * duration_in_second);
+  hfilter->preValue = 0.0f;
+  hfilter->output.f = 0.0f;
+}
+void LowPassFilter_Update(LowPassFilterHandle* hfilter, float new_data)
+{
+  hfilter->output.f = (1.0f - hfilter->alpha) * hfilter->preValue + hfilter->alpha * new_data;
+  hfilter->preValue = new_data;
+}

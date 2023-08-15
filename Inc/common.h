@@ -82,10 +82,18 @@ typedef struct
   float curError;
   float kp, ki, kd;
 }PIDHandle;
+typedef struct
+{
+  float alpha;
+  float preValue;
+  union FloatUInt8  output;
+}LowPassFilterHandle;
 void PID(float* output, float mesVal, float desVal,  PIDHandle* hpid);
 void Averager_Init(AveragerHandle* havg);
 void Averager_Update(AveragerHandle* havg, float new_data);
 void Averager_Start(AveragerHandle* havg, float initVal);
+void LowPassFilter_Init(LowPassFilterHandle* hfilter, float cut_off_frequency, float duration_in_second);
+void LowPassFilter_Update(LowPassFilterHandle* hfilter, float new_data);
 void MicroSecDelay(TIM_HandleTypeDef* htim, uint16_t us);
 void InverseMatrix3D(float (*m)[3], float(*output)[3]);
 float DetMatrix3D(float (*m)[3]);
