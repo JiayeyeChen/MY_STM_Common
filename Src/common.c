@@ -26,7 +26,7 @@ void Averager_Start(AveragerHandle* havg, float initVal)
 void MicroSecDelay(TIM_HandleTypeDef* htim, uint16_t us)
 {
 	__HAL_TIM_SET_COUNTER(htim,0);
-	while (__HAL_TIM_GET_COUNTER(htim) < us);
+	while (__HAL_TIM_GET_COUNTER(htim) != us - 1);
 }
 
 void InverseMatrix3D(float (*m)[3], float(*output)[3])
